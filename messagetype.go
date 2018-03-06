@@ -36,6 +36,14 @@ type Init_Req struct {
 	} `json:"params"`
 }
 
+type Ruleset_Infos  struct {
+	Authority         string `json:"authority"`
+	RulesetID         string `json:"rulesetId"`
+	MaxLocationChange int    `json:"maxLocationChange"`
+	MaxPollingSecs    int    `json:"maxPollingSecs"`
+	McwsdSupport      bool   `json:"mcwsdSupport"`
+}
+
 type Init_Resp struct {
 	Jsonrpc string `json:"jsonrpc"`
 	ID      int    `json:"id"`
@@ -43,13 +51,7 @@ type Init_Resp struct {
 		Type          string      `json:"type"`
 		Version       string      `json:"version"`
 		ServerMessage interface{} `json:"serverMessage"`
-		RulesetInfos  []struct {
-			Authority         string `json:"authority"`
-			RulesetID         string `json:"rulesetId"`
-			MaxLocationChange int    `json:"maxLocationChange"`
-			MaxPollingSecs    int    `json:"maxPollingSecs"`
-			McwsdSupport      bool   `json:"mcwsdSupport"`
-		} `json:"rulesetInfos"`
+		RulesetInfos  []Ruleset_Infos `json:"rulesetInfos"`
 		DatabaseChange interface{} `json:"databaseChange"`
 	} `json:"result"`
 }

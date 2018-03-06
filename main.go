@@ -24,7 +24,15 @@ func handler(w http.ResponseWriter, r *http.Request) {
     return
 }
 
+var db Mysql
+
+func spectrum_init() {
+    db.MysqlOpen("testbed_v3_1", "127.0.0.1" ,3306)
+    return
+}
+
 func main() {
+    spectrum_init()
     http.HandleFunc("/", handler)
     http.ListenAndServe("127.0.0.1:8080", nil)
     //http.ListenAndServeTLS(":8081", "server.crt", "server.key", nil)
