@@ -4,6 +4,31 @@ import (
     "time"
 )
 
+
+type Location_ struct {
+	Point struct {
+		Center struct {
+			Latitude  float64 `json:"latitude"`
+			Longitude float64 `json:"longitude"`
+		} `json:"center"`
+		SemiMajorAxis int `json:"semiMajorAxis"`
+		SemiMinorAxis int `json:"semiMinorAxis"`
+		Orientation   int `json:"orientation"`
+	} `json:"point"`
+	Confidence int `json:"confidence"`
+}
+
+type Device_Desc struct {
+	SerialNumber               string   `json:"serialNumber"`
+	ManufacturerID             string   `json:"manufacturerId"`
+	ModelID                    string   `json:"modelId"`
+	RulesetIds                 []string `json:"rulesetIds"`
+	EtsiEnDeviceType           string   `json:"etsiEnDeviceType"`
+	EtsiEnDeviceCategory       string   `json:"etsiEnDeviceCategory"`
+	EtsiEnDeviceEmissionsClass string   `json:"etsiEnDeviceEmissionsClass"`
+	EtsiEnTechnologyID         string   `json:"etsiEnTechnologyId"`
+}
+
 type Init_Req struct {
 	Jsonrpc string `json:"jsonrpc"`
 	ID      int    `json:"id"`
@@ -11,32 +36,12 @@ type Init_Req struct {
 	Params  struct {
 		Type       string `json:"type"`
 		Version    string `json:"version"`
-		DeviceDesc struct {
-			SerialNumber               string   `json:"serialNumber"`
-			ManufacturerID             string   `json:"manufacturerId"`
-			ModelID                    string   `json:"modelId"`
-			RulesetIds                 []string `json:"rulesetIds"`
-			EtsiEnDeviceType           string   `json:"etsiEnDeviceType"`
-			EtsiEnDeviceCategory       string   `json:"etsiEnDeviceCategory"`
-			EtsiEnDeviceEmissionsClass string   `json:"etsiEnDeviceEmissionsClass"`
-			EtsiEnTechnologyID         string   `json:"etsiEnTechnologyId"`
-		} `json:"deviceDesc"`
-		Location struct {
-			Point struct {
-				Center struct {
-					Latitude  float64 `json:"latitude"`
-					Longitude float64 `json:"longitude"`
-				} `json:"center"`
-				SemiMajorAxis int `json:"semiMajorAxis"`
-				SemiMinorAxis int `json:"semiMinorAxis"`
-				Orientation   int `json:"orientation"`
-			} `json:"point"`
-			Confidence int `json:"confidence"`
-		} `json:"location"`
+		DeviceDesc Device_Desc `json:"deviceDesc"`
+		Location Location_ `json:"location"`
 	} `json:"params"`
 }
 
-type Ruleset_Infos  struct {
+type Ruleset_Info  struct {
 	Authority         string `json:"authority"`
 	RulesetID         string `json:"rulesetId"`
 	MaxLocationChange int    `json:"maxLocationChange"`
@@ -51,10 +56,11 @@ type Init_Resp struct {
 		Type          string      `json:"type"`
 		Version       string      `json:"version"`
 		ServerMessage interface{} `json:"serverMessage"`
-		RulesetInfos  []Ruleset_Infos `json:"rulesetInfos"`
+		RulesetInfos  []Ruleset_Info `json:"rulesetInfos"`
 		DatabaseChange interface{} `json:"databaseChange"`
 	} `json:"result"`
 }
+
 
 type Avail_Spectrum_Req struct {
 	Jsonrpc string `json:"jsonrpc"`
@@ -63,28 +69,8 @@ type Avail_Spectrum_Req struct {
 	Params  struct {
 		Type       string `json:"type"`
 		Version    string `json:"version"`
-		DeviceDesc struct {
-			SerialNumber               string   `json:"serialNumber"`
-			ManufacturerID             string   `json:"manufacturerId"`
-			ModelID                    string   `json:"modelId"`
-			RulesetIds                 []string `json:"rulesetIds"`
-			EtsiEnDeviceType           string   `json:"etsiEnDeviceType"`
-			EtsiEnDeviceCategory       string   `json:"etsiEnDeviceCategory"`
-			EtsiEnDeviceEmissionsClass string   `json:"etsiEnDeviceEmissionsClass"`
-			EtsiEnTechnologyID         string   `json:"etsiEnTechnologyId"`
-		} `json:"deviceDesc"`
-		Location struct {
-			Point struct {
-				Center struct {
-					Latitude  float64 `json:"latitude"`
-					Longitude float64 `json:"longitude"`
-				} `json:"center"`
-				SemiMajorAxis int `json:"semiMajorAxis"`
-				SemiMinorAxis int `json:"semiMinorAxis"`
-				Orientation   int `json:"orientation"`
-			} `json:"point"`
-			Confidence int `json:"confidence"`
-		} `json:"location"`
+		DeviceDesc Device_Desc `json:"deviceDesc"`
+		Location Location_ `json:"location"`
 		Antenna struct {
 			Height            int    `json:"height"`
 			HeightType        string `json:"heightType"`
@@ -99,26 +85,11 @@ type Avail_Spectrum_Resp struct {
 	Result  struct {
 		Type          string      `json:"type"`
 		Version       string      `json:"version"`
+		DeviceDesc Device_Desc `json:"deviceDesc"`
 		ServerMessage interface{} `json:"serverMessage"`
 		Timestamp     time.Time   `json:"timestamp"`
-		DeviceDesc    struct {
-			SerialNumber               string   `json:"serialNumber"`
-			ManufacturerID             string   `json:"manufacturerId"`
-			ModelID                    string   `json:"modelId"`
-			RulesetIds                 []string `json:"rulesetIds"`
-			EtsiEnDeviceType           string   `json:"etsiEnDeviceType"`
-			EtsiEnDeviceEmissionsClass string   `json:"etsiEnDeviceEmissionsClass"`
-			EtsiEnTechnologyID         string   `json:"etsiEnTechnologyId"`
-			EtsiEnDeviceCategory       string   `json:"etsiEnDeviceCategory"`
-		} `json:"deviceDesc"`
 		SpectrumSpecs []struct {
-			RulesetInfo struct {
-				Authority         string `json:"authority"`
-				RulesetID         string `json:"rulesetId"`
-				MaxLocationChange int    `json:"maxLocationChange"`
-				MaxPollingSecs    int    `json:"maxPollingSecs"`
-				McwsdSupport      bool   `json:"mcwsdSupport"`
-			} `json:"rulesetInfo"`
+			RulesetInfo Ruleset_Info `json:"rulesetInfo"`
 			SpectrumSchedules []struct {
 				EventTime struct {
 					StartTime time.Time `json:"startTime"`
@@ -155,28 +126,8 @@ type Spectrum_Use_Notify struct {
 	Params  struct {
 		Type       string `json:"type"`
 		Version    string `json:"version"`
-		DeviceDesc struct {
-			SerialNumber               string   `json:"serialNumber"`
-			ManufacturerID             string   `json:"manufacturerId"`
-			ModelID                    string   `json:"modelId"`
-			RulesetIds                 []string `json:"rulesetIds"`
-			EtsiEnDeviceType           string   `json:"etsiEnDeviceType"`
-			EtsiEnDeviceCategory       string   `json:"etsiEnDeviceCategory"`
-			EtsiEnDeviceEmissionsClass string   `json:"etsiEnDeviceEmissionsClass"`
-			EtsiEnTechnologyID         string   `json:"etsiEnTechnologyId"`
-		} `json:"deviceDesc"`
-		Location struct {
-			Point struct {
-				Center struct {
-					Latitude  float64 `json:"latitude"`
-					Longitude float64 `json:"longitude"`
-				} `json:"center"`
-				SemiMajorAxis int `json:"semiMajorAxis"`
-				SemiMinorAxis int `json:"semiMinorAxis"`
-				Orientation   int `json:"orientation"`
-			} `json:"point"`
-			Confidence int `json:"confidence"`
-		} `json:"location"`
+		DeviceDesc Device_Desc `json:"deviceDesc"`
+		Location Location_ `json:"location"`
 		Spectra []struct {
 			ResolutionBwHz int `json:"resolutionBwHz"`
 			Profiles       [][]struct {
