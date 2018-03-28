@@ -34,6 +34,6 @@ func spectrum_init() {
 func main() {
     spectrum_init()
     http.HandleFunc("/", handler)
-    http.ListenAndServe("127.0.0.1:8080", nil)
+    http.ListenAndServe("127.0.0.1:443", nil)
     //http.ListenAndServeTLS(":8081", "server.crt", "server.key", nil)
 }

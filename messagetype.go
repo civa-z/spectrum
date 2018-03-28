@@ -76,7 +76,47 @@ type Avail_Spectrum_Req struct {
 			HeightType        string `json:"heightType"`
 			HeightUncertainty int    `json:"heightUncertainty"`
 		} `json:"antenna"`
+        MasterDeviceDesc Device_Desc `json:"masterDeviceDesc"`//Slave req
+        MasterDeviceLocation Location_ `json:"masterDeviceLocation"`//Slave req
+        RequestType string `json:"requestType"`//GOP desc: request channel list for Slave(CPE) in Master
 	} `json:"params"`
+}
+
+type Profile struct {
+    Hz  int `json:"hz"`
+    Dbm int `json:"dbm"`
+}
+
+type Spectrum struct {
+    Profiles [][]Profile `json:"profiles"`
+    ResolutionBwHz int `json:"resolutionBwHz"`
+}
+
+type Spectrum_Schedule struct {
+    EventTime struct {
+        StartTime time.Time `json:"startTime"`
+        StopTime  time.Time `json:"stopTime"`
+    } `json:"eventTime"`
+    Spectra []Spectrum `json:"spectra"`
+}
+
+type Frequency_Range struct {
+    StartHz int `json:"startHz"`
+    StopHz  int `json:"stopHz"`
+}
+
+type Spectrum_Spec struct {
+	RulesetInfo Ruleset_Info `json:"rulesetInfo"`
+	SpectrumSchedules []Spectrum_Schedule `json:"spectrumSchedules"`
+	TimeRange struct {
+		StartTime time.Time `json:"startTime"`
+		StopTime  time.Time `json:"stopTime"`
+	} `json:"timeRange"`
+	FrequencyRanges []Frequency_Range `json:"frequencyRanges"`
+	NeedsSpectrumReport            bool   `json:"needsSpectrumReport"`
+	MaxTotalBwHz                   int    `json:"maxTotalBwHz"`
+	MaxContiguousBwHz              int    `json:"maxContiguousBwHz"`
+	EtsiEnSimultaneousChannelOpera string `json:"etsiEnSimultaneousChannelOpera"`
 }
 
 type Avail_Spectrum_Resp struct {
@@ -88,34 +128,7 @@ type Avail_Spectrum_Resp struct {
 		DeviceDesc Device_Desc `json:"deviceDesc"`
 		ServerMessage interface{} `json:"serverMessage"`
 		Timestamp     time.Time   `json:"timestamp"`
-		SpectrumSpecs []struct {
-			RulesetInfo Ruleset_Info `json:"rulesetInfo"`
-			SpectrumSchedules []struct {
-				EventTime struct {
-					StartTime time.Time `json:"startTime"`
-					StopTime  time.Time `json:"stopTime"`
-				} `json:"eventTime"`
-				Spectra []struct {
-					Profiles [][]struct {
-						Hz  int `json:"hz"`
-						Dbm int `json:"dbm"`
-					} `json:"profiles"`
-					ResolutionBwHz int `json:"resolutionBwHz"`
-				} `json:"spectra"`
-			} `json:"spectrumSchedules"`
-			TimeRange struct {
-				StartTime time.Time `json:"startTime"`
-				StopTime  time.Time `json:"stopTime"`
-			} `json:"timeRange"`
-			FrequencyRanges []struct {
-				StartHz int `json:"startHz"`
-				StopHz  int `json:"stopHz"`
-			} `json:"frequencyRanges"`
-			NeedsSpectrumReport            bool   `json:"needsSpectrumReport"`
-			MaxTotalBwHz                   int    `json:"maxTotalBwHz"`
-			MaxContiguousBwHz              int    `json:"maxContiguousBwHz"`
-			EtsiEnSimultaneousChannelOpera string `json:"etsiEnSimultaneousChannelOpera"`
-		} `json:"spectrumSpecs"`
+		SpectrumSpecs []Spectrum_Spec  `json:"spectrumSpecs"`
 	} `json:"result"`
 }
 
@@ -128,13 +141,9 @@ type Spectrum_Use_Notify struct {
 		Version    string `json:"version"`
 		DeviceDesc Device_Desc `json:"deviceDesc"`
 		Location Location_ `json:"location"`
-		Spectra []struct {
-			ResolutionBwHz int `json:"resolutionBwHz"`
-			Profiles       [][]struct {
-				Hz  int `json:"hz"`
-				Dbm int `json:"dbm"`
-			} `json:"profiles"`
-		} `json:"spectra"`
+		Spectra []Spectrum `json:"spectra"`
+        MasterDeviceDesc Device_Desc `json:"masterDeviceDesc"`//Slave req
+        MasterDeviceLocation Location_ `json:"masterDeviceLocation"`//Slave req
 	} `json:"params"`
 }
 

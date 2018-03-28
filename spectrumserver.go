@@ -70,16 +70,14 @@ func OnInitReq(req_body_byte []byte) ([]byte, int) {
     resp.Result.Type = "INIT_RESP"
     resp.Result.Version = req.Params.Version
 
-    //TO DO
     for _, resultid := range req.Params.DeviceDesc.RulesetIds {
         var ruleset_info Ruleset_Info
         ruleset_info.Authority = "uk"
         ruleset_info.RulesetID = resultid
-        ruleset_info.MaxLocationChange = 0
-        ruleset_info.MaxPollingSecs = 0
-        ruleset_info.McwsdSupport = false
+        ruleset_info.MaxLocationChange = 50
+        ruleset_info.MaxPollingSecs = 900
+        ruleset_info.McwsdSupport = true
 	resp.Result.RulesetInfos = append(resp.Result.RulesetInfos, ruleset_info)
-	//ap := db.GetAllPtx(resultid)
     }
 
     resp_body_byte, e:= json.Marshal(resp)
@@ -101,6 +99,52 @@ func OnAvailSpectrumReq(req_body_byte []byte) ([]byte, int) {
     resp.Result.Version = req.Params.Version
     resp.Result.Timestamp = time.Now()
     resp.Result.DeviceDesc = req.Params.DeviceDesc
+    resp.Result.DeviceDesc.SerialNumber = "750000105"
+    resp.Result.DeviceDesc.EtsiEnDeviceEmissionsClass = "3"
+
+    for _, resultid := range req.Params.DeviceDesc.RulesetIds{
+        var profile Profile
+        profile.Hz = 470000000
+        profile.Dbm = 20
+
+        var profile_list []Profile
+        profile_list = append(profile_list, profile)
+
+        var spectrum Spectrum
+        spectrum.Profiles = append(spectrum.Profiles, profile_list)
+	spectrum.ResolutionBwHz = 8000000
+
+        var spectrumSchedule Spectrum_Schedule
+        spectrumSchedule.Spectra = append(spectrumSchedule.Spectra, spectrum)
+        spectrumSchedule.EventTime.StartTime = time.Now()
+        spectrumSchedule.EventTime.StopTime = time.Now()
+
+        var spectrumSpec Spectrum_Spec
+        spectrumSpec.SpectrumSchedules = append(spectrumSpec.SpectrumSchedules, spectrumSchedule)
+
+	spectrumSpec.TimeRange.StartTime = time.Now()
+	spectrumSpec.TimeRange.StopTime = time.Now()
+
+        var ruleset_info Ruleset_Info
+        ruleset_info.Authority = "uk"
+        ruleset_info.RulesetID = resultid
+        ruleset_info.MaxLocationChange = 50
+        ruleset_info.MaxPollingSecs = 900
+        ruleset_info.McwsdSupport = true
+        spectrumSpec.RulesetInfo = ruleset_info
+
+	var frequencyRange Frequency_Range
+	frequencyRange.StartHz = 470000000
+	frequencyRange.StopHz = 790000000
+	spectrumSpec.FrequencyRanges = append(spectrumSpec.FrequencyRanges, frequencyRange)
+
+	spectrumSpec.NeedsSpectrumReport = true
+	spectrumSpec.MaxTotalBwHz = 24000000
+	spectrumSpec.MaxContiguousBwHz = 24000000
+	spectrumSpec.EtsiEnSimultaneousChannelOpera = "0"
+
+        resp.Result.SpectrumSpecs = append(resp.Result.SpectrumSpecs, spectrumSpec)
+    }
 
     resp_body_byte, e:= json.Marshal(resp)
     if e != nil{
