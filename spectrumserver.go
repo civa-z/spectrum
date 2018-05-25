@@ -6,6 +6,7 @@ import (
     "io/ioutil"
     "time"
     "log"
+    "strings"
 )
 
 const (
@@ -21,8 +22,13 @@ const (
 
 
 func ProcessReq(r *http.Request) ([]byte, int) {
+    //Url: /data
     var resp[]byte
     var ret int
+
+    if !strings.Contains(r.URL.String(), "/date") {
+        return nil, 404
+    }
 
     body, _ := ioutil.ReadAll(r.Body)
     body_str := string(body)
@@ -53,9 +59,9 @@ func PraseReqType(req_body_byte []byte) (string) {
 
     if Params, ok := req["params"]; ok {
 	ParamsMap := Params.(map[string]interface{})
-	if Type, ok := ParamsMap["type"]; ok{
-	    return Type.(string)
-	}
+	    if Type, ok := ParamsMap["type"]; ok{
+			return Type.(string)
+	    }
     }
     return ""
 }

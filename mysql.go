@@ -60,3 +60,34 @@ func (mql *Mysql) GetAllPtx(IP_address string) (All_Ptx) {
     return ap
 }
 
+func (mql *Mysql) GetCMMB(name string) (CMMB) {
+    var cmmb CMMB
+
+    command := fmt.Sprintf(`SELECT * FROM `)
+    rows, err := mql.Conn.Query(command)
+    if err != nil {
+        log.Println("command:", command)
+        log.Println(err)
+        return ap
+    }
+    defer rows.Close()
+
+    for rows.Next() {
+        err := rows.Scan(
+            &ap.id,
+            &ap.IP_address,
+            &ap.location_x,
+            &ap.location_y,
+            &ap.channel,
+            &ap.PTX,
+            &ap.OFCOM,
+            &ap.ECC,
+            &ap.QoS,)
+        if err != nil {
+            log.Println(err)
+        }
+    }
+    return ap
+}
+
+
