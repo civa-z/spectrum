@@ -12,25 +12,16 @@ type All_Ptx struct {
     QoS         float64
 }
 
-type CMMB struct {
+type Freq_Using struct {
     ID           int
     DistrictCode string
     Channel      int
     Power        float32
 }
 
-type DTMB struct {
-    ID           int
-    DistrictCode string
-    Channel      int
-    Power        float32
-}
-
-type TV struct {
-    ID           int
-    DistrictCode string
-    Channel      int
-    Power        float32
+type Freq_Using_List struct {
+    Name          string
+    FreqUsingList []Freq_Using
 }
 
 type Frequency struct {
@@ -43,10 +34,11 @@ type Frequency struct {
     High         float32
 }
 
-type LocationInfo {
+type LocationInfo struct {
     Id           int
     Province     string
     City         string
     District     string
     Code         string
 }
+

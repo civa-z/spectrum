@@ -1,148 +1,404 @@
 ﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+<style>
+#header {
+	background-color:black;
+	color:white;
+	text-align:center;
+	padding:5px;
+}
+
+
+ul{margin:0;padding:0;list-style:none;}  
+.table{display:table;border-collapse:collapse;border:1px solid #ccc;}  
+.table-caption{display:table-caption;margin:0;padding:0;font-size:16px;}  
+.table-column-group{display:table-column-group;}  
+.table-column{display:table-column;width:100px;}  
+.table-row-group{display:table-row-group;}  
+.table-row{display:table-row;}  
+.table-row-group .table-row:hover,.table-footer-group .table-row:hover{background:#f6f6f6;}  
+.table-cell{display:table-cell;padding:0 5px;border:1px solid #ccc;}  
+.table-header-group{display:table-header-group;background:#eee;font-weight:bold;}  
+.table-footer-group{display:table-footer-group;} 
+
+
+/* ------------------------------------------------- */
+
+#tabs{
+  overflow: hidden;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#tabs li{
+  float: left;
+  margin: 0 .5em 0 0;
+}
+
+#tabs a{
+  position: relative;
+  background: #ddd;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ddd));
+  background-image: -webkit-linear-gradient(top, #fff, #ddd);
+  background-image: -moz-linear-gradient(top, #fff, #ddd);
+  background-image: -ms-linear-gradient(top, #fff, #ddd);
+  background-image: -o-linear-gradient(top, #fff, #ddd);
+  background-image: linear-gradient(to bottom, #fff, #ddd);  
+  padding: .7em 3.5em;
+  float: left;
+  text-decoration: none;
+  color: #444;
+  text-shadow: 0 1px 0 rgba(255,255,255,.8);
+  -webkit-border-radius: 5px 0 0 0;
+  -moz-border-radius: 5px 0 0 0;
+  border-radius: 5px 0 0 0;
+  -moz-box-shadow: 0 2px 2px rgba(0,0,0,.4);
+  -webkit-box-shadow: 0 2px 2px rgba(0,0,0,.4);
+  box-shadow: 0 2px 2px rgba(0,0,0,.4);
+}
+
+#tabs a:hover,
+#tabs a:hover::after,
+#tabs a:focus,
+#tabs a:focus::after{
+  background: #fff;
+}
+
+#tabs a:focus{
+  outline: 0;
+}
+
+#tabs a::after{
+  content:'';
+  position:absolute;
+  z-index: 1;
+  top: 0;
+  right: -.5em;  
+  bottom: 0;
+  width: 1em;
+  background: #ddd;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ddd));
+  background-image: -webkit-linear-gradient(top, #fff, #ddd);
+  background-image: -moz-linear-gradient(top, #fff, #ddd);
+  background-image: -ms-linear-gradient(top, #fff, #ddd);
+  background-image: -o-linear-gradient(top, #fff, #ddd);
+  background-image: linear-gradient(to bottom, #fff, #ddd);  
+  -moz-box-shadow: 2px 2px 2px rgba(0,0,0,.4);
+  -webkit-box-shadow: 2px 2px 2px rgba(0,0,0,.4);
+  box-shadow: 2px 2px 2px rgba(0,0,0,.4);
+  -webkit-transform: skew(10deg);
+  -moz-transform: skew(10deg);
+  -ms-transform: skew(10deg);
+  -o-transform: skew(10deg);
+  transform: skew(10deg);
+  -webkit-border-radius: 0 5px 0 0;
+  -moz-border-radius: 0 5px 0 0;
+  border-radius: 0 5px 0 0;  
+}
+
+#tabs #current a{
+  background: #fff;
+  z-index: 3;
+}
+
+#tabs #current a::after{
+  background: #fff;
+  z-index: 3;
+}
+
+/* ------------------------------------------------- */
+
+#content
+{
+    background: #fff;
+    padding: 2em;
+	height: 220px;
+	position: relative;
+	z-index: 2;	
+    -moz-border-radius: 0 5px 5px 5px;
+    -webkit-border-radius: 0 5px 5px 5px;
+    border-radius: 0 5px 5px 5px;
+    -moz-box-shadow: 0 -2px 3px -2px rgba(0, 0, 0, .5);
+    -webkit-box-shadow: 0 -2px 3px -2px rgba(0, 0, 0, .5);
+    box-shadow: 0 -2px 3px -2px rgba(0, 0, 0, .5);
+}
+
+#content h2, #content h3, #content p
+{
+    margin: 0 0 15px 0;
+}
+
+/* ------------------------------------------------- */
+
+#about
+{
+    color: #999;
+}
+
+#about a
+{
+    color: #eee;
+}
+
+</style>
     <title></title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <!-- 新 Bootstrap 核心 CSS 文件 -->
     <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
-    <!--        <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
+    <!--<script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
 </head>
 <body>
+	<div id="header">	<h1>Sony Spectrum Database</h1>	</div>
     <div class="container">
-        <div>内容：</div>
-        <div class="list-group" id="divShow">
-            <!--<div class="list-group-item list-group-item-success">1111</div>
-            <div class="list-group-item list-group-item-info">1111</div>
-            <div class="list-group-item list-group-item-warning">1111</div>
-            <div class="list-group-item list-group-item-danger">1111</div>-->
-        </div>
-        <div class="list-group" id="divUsers">
-            在线：<br />
-            <!--<div class="btn btn-default">111</div>-->
+		<div style="float:left">Server connect status：</div>
+		<div id="server-status" style="float:left"></div>
+		
+		<ul id="tabs">
+			<li><a href="#" name="cmmb">cmmb</a></li>
+			<li><a href="#" name="dtmb">dtmb</a></li>
+			<li><a href="#" name="tv">tv</a></li>
+			<li><a href="#" name="frequency">frequency</a></li>    
+		</ul>
+		<div id="content">
+			<div id="cmmb">
+				<div id="spectrum-cmmb" class="table">  
+					<h2 class="table-caption">CMMB SpectrumList</h2>  
+					<div class="table-column-group">  
+						<div class="table-column"></div>
+						<div class="table-column"></div>
+						<div class="table-column"></div>
+						<div class="table-column"></div>
+					</div>
+					<div class="table-header-group">
+						<ul class="table-row">
+							<li class="table-cell">id</li>
+							<li class="table-cell">districtcode</li>
+							<li class="table-cell">channel</li>
+							<li class="table-cell">power</li>
+						</ul>
+					</div>
+					<div class="table-footer-group">
+						<ul class="table-row">
+							<li class="table-cell">-</li>
+							<li class="table-cell">-</li>
+							<li class="table-cell">-</li>
+							<li class="table-cell">-</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div id="dtmb">
+				<div id="spectrum-dtmb" class="table">  
+					<h2 class="table-caption">DTMB SpectrumList</h2>  
+					<div class="table-column-group">  
+						<div class="table-column"></div>
+						<div class="table-column"></div>
+						<div class="table-column"></div>
+						<div class="table-column"></div>
+					</div>
+					<div class="table-header-group">
+						<ul class="table-row">
+							<li class="table-cell">id</li>
+							<li class="table-cell">districtcode</li>
+							<li class="table-cell">channel</li>
+							<li class="table-cell">power</li>
+						</ul>
+					</div>
+					<div class="table-footer-group">
+						<ul class="table-row">
+							<li class="table-cell">-</li>
+							<li class="table-cell">-</li>
+							<li class="table-cell">-</li>
+							<li class="table-cell">-</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div id="tv">
+				<div id="spectrum-tv" class="table">  
+					<h2 class="table-caption">TV SpectrumList</h2>  
+					<div class="table-column-group">  
+						<div class="table-column"></div>
+						<div class="table-column"></div>
+						<div class="table-column"></div>
+						<div class="table-column"></div>
+					</div>
+					<div class="table-header-group">
+						<ul class="table-row">
+							<li class="table-cell">id</li>
+							<li class="table-cell">districtcode</li>
+							<li class="table-cell">channel</li>
+							<li class="table-cell">power</li>
+						</ul>
+					</div>
+					<div class="table-footer-group">
+						<ul class="table-row">
+							<li class="table-cell">-</li>
+							<li class="table-cell">-</li>
+							<li class="table-cell">-</li>
+							<li class="table-cell">-</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div id="frequency">
+				<div id="frequency-list" class="table">  
+					<h2 class="table-caption">Frequence</h2>  
+					<div class="table-column-group">  
+						<div class="table-column"></div>
+						<div class="table-column"></div>
+						<div class="table-column"></div>
+						<div class="table-column"></div>
+					</div>
+					<div class="table-header-group">
+						<ul class="table-row">
+							<li class="table-cell">id</li>
+							<li class="table-cell">districtcode</li>
+							<li class="table-cell">channel</li>
+							<li class="table-cell">power</li>
+						</ul>
+					</div>
+					<div class="table-footer-group">
+						<ul class="table-row">
+							<li class="table-cell">-</li>
+							<li class="table-cell">-</li>
+							<li class="table-cell">-</li>
+							<li class="table-cell">-</li>
+						</ul>
+					</div>
+				</div>
+			</div>
 
-        </div>
-        <div>
-            昵称：<input class="form-control" id="txtUserName" value="红领巾" type="text" maxlength="20" style="width: 30%; margin-bottom: 15px" />
-            聊聊：<textarea class="form-control" id="txtContent" autofocus rows="6" placeholder="想聊的内容" maxlength="200" required style="width: 60%; "></textarea>
-            <button class="btn btn-default" id="btnSend" style="margin-top:15px">发 送</button>
-        </div>
+		</div>
     </div>
 </body>
 </html>
-
+<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
 <script>
 
-    var tool = function () {
-
-        var paperLoopNum = 0;
-        var paperTempleArr = [
-            '<div class="list-group-item list-group-item-success">{0}</div>',
-            '<div class="list-group-item list-group-item-info">{0}</div>',
-            '<div class="list-group-item list-group-item-warning">{0}</div>',
-            '<div class="list-group-item list-group-item-danger">{0}</div>'
-        ];
-
-        return {
-
-            paperDiv: function (val) {
-
-                var hl = paperTempleArr[paperLoopNum];
-                paperLoopNum++;
-                if (paperLoopNum >= paperTempleArr.length) { paperLoopNum = 0; }
-
-                return this.formart(hl, [val])
-            },
-            formart: function (str, arrVal) {
-
-                for (var i = 0; i < arrVal.length; i++) {
-                    str = str.replace("{" + i + "}", arrVal[i]);
-                }
-                return str;
-            }
+$(document).ready(function() {
+    //$("#content div").hide(); // Initially hide all content
+    $("#tabs li:first").attr("id","current"); // Activate first tab
+	$("#content").children().hide(); // Show first tab content
+    $("#content div:first").fadeIn(); // Show first tab content
+    $('#tabs a').click(function(e) {
+        e.preventDefault();
+        if ($(this).closest("li").attr("id") == "current"){ //detection for current tab
+			return       
         }
-    }
-
-    function showMsg(id, hl, isAppend) {
-
-        if (!isAppend) { $("#" + id).html(hl); } else {
-            $("#" + id).append(hl);
+        else{             
+			//$("#content div").hide(); //Hide all content
+			var tet = '#' + $("#current").children("a").attr("name");
+			$('#' + $("#current").children("a").attr("name")).hide(); // Show content for current tab
+			$("#tabs li").attr("id",""); //Reset id's
+			$(this).parent().attr("id","current"); // Activate this
+			var testt = '#' + $(this).attr('name');
+			$('#' + $(this).attr('name')).fadeIn(); // Show content for current tab
         }
-    }
+    });
+});
 
-    $(function () {
+var paperTempleArr = [
+	'<div class="list-group-item list-group-item-success">{0}</div>',
+	'<div class="list-group-item list-group-item-info">{0}</div>',
+	'<div class="list-group-item list-group-item-warning">{0}</div>',
+	'<div class="list-group-item list-group-item-danger">{0}</div>',
+	'<div class="table-row-group"><ul class="table-row"><li class="table-cell">{0}</li><li class="table-cell">{1}</li><li class="table-cell">{2}</li><li class="table-cell">{3}</li></ul></div>'
+];
 
-        //初始化工具方法
-        var tl = new tool();
+var tool = function () {
+	var paperLoopNum = 0;
+	return {
 
-        var wsUrl = "ws://172.16.9.6:8/webSocket";
-        ws = new WebSocket(wsUrl);
+		paperDiv: function (val) {
 
-        try {
+			var hl = paperTempleArr[paperLoopNum];
+			paperLoopNum++;
+			if (paperLoopNum >= paperTempleArr.length) { paperLoopNum = 0; }
 
-            ws.onopen = function () {
+			return this.formart(hl, [val])
+		},
+		formart: function (str, arrVal) {
 
-                //showMsg("divShow", tl.paperDiv("连接服务器-成功"));
-            }
+			for (var i = 0; i < arrVal.length; i++) {
+				str = str.replace("{" + i + "}", arrVal[i]);
+			}
+			return str;
+		}
+	}
+}
 
-            ws.onclose = function () {
-                if (ws) {
-                    ws.close();
-                    ws = null;
-                }
-                showMsg("divShow", tl.paperDiv("连接服务器-关闭"), true);
-            }
+function showMsg(id, hl, isAppend) {
 
-            ws.onmessage = function (result) {
+	if (!isAppend) { $("#" + id).html(hl); } else {
+		$("#" + id).append(hl);
+	}
+}
 
-                //console.log(result.data);
-                var data = JSON.parse(result.data);
-                $(data.UserMsgs).each(function (i, item) {
-                    showMsg("divShow", tl.paperDiv("【" + item.UserName + "】：" + item.Msg), true);
-                });
+ var send_message = function () {
+		if (ws == null) { alert("连接失败，请F5刷新页面!"); return; }
 
-                var userDataShow = [];
-                $(data.UserDatas).each(function (i, item) {
+		var request = JSON.stringify({Type: "CMMB"});
+		ws.send(request);
+	};
 
-                    userDataShow.push('<div class="btn btn-default">' + item.UserName + '</div>');
+$(function () {
 
-                });
-                showMsg("divUsers", userDataShow.join(''), false);
-            }
+	//初始化工具方法
+	var tl = new tool();
 
-            ws.onerror = function () {
-                if (ws) {
-                    ws.close();
-                    ws = null;
-                }
-                showMsg("divShow", tl.paperDiv("连接服务器-关闭"), true);
-            }
+	var wsUrl = "ws://43.82.40.115:443/webSocket";
+	ws = new WebSocket(wsUrl);
 
-        } catch (e) {
+	try {
 
-            alert(e.message);
-        }
-        $("#btnSend").on("click", function () {
+		ws.onopen = function () {
+			showMsg("server-status", tl.paperDiv("successfully connected"), true);
+			<!--showMsg("spectrum-cmmb", tl.formart(paperTempleArr[4], [1,1,1,1]), true);-->
+			send_message();
+		}
 
-            var tContentObj = $("#txtContent");
-            var tContent = $.trim( tContentObj.val()).replace("/[\n]/g", "");
-            var tUserName = $.trim( $("#txtUserName").val()); tUserName = tUserName.length <= 0 ? "匿名" : tUserName;
-            if (tContent.length <= 0 || $.trim(tContent).length <= 0) { alert("请输入发送内容!"); return; }
-            if (ws == null) { alert("连接失败，请F5刷新页面!"); return; }
+		ws.onclose = function () {
+			if (ws) {
+				ws.close();
+				ws = null;
+			}
+			showMsg("divShow", tl.paperDiv("Server closed"), true);
+		}
 
-            var request = tl.formart('{"UserName": "{0}", "DataType": "{1}", "Msg": "{2}" }',
-                                     [tUserName, "send", tContent]);
-            ws.send(request);
-            tContentObj.val("");
-            tContentObj.val($.trim(tContentObj.val()).replace("/[\n]/g", ""));
-        });
-        $("#txtContent").on("keydown", function (event) {
+		ws.onmessage = function (result) {
 
-            if (event.keyCode == 13) {
+			//console.log(result.data);
+			var data = JSON.parse(result.data);
+			$(data.FreqUsingList).each(function (i, item) {
+				showMsg("spectrum-cmmb", tl.formart(paperTempleArr[4], [item.ID, item.DistrictCode, item.Channel, item.Power]), true);
+			});
+		}
 
-                $("#btnSend").trigger("click");
-            }
-        });
-    })
+		ws.onerror = function () {
+			if (ws) {
+				ws.close();
+				ws = null;
+			}
+			showMsg("divShow", tl.paperDiv("连接服务器-关闭"), true);
+		}
+
+	} catch (e) {
+
+		alert(e.message);
+	}
+   
+	$("#txtContent").on("keydown", function (event) {
+
+		if (event.keyCode == 13) {
+
+			$("#btnSend").trigger("click");
+		}
+	});
+});
 
 </script>

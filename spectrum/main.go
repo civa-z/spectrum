@@ -6,7 +6,9 @@ import (
     "log"
     "net/http"
     "strconv"
-	"golang.org/x/net/websocket"
+    "golang.org/x/net/websocket"
+    "strings"
+    "encoding/json"
 )
 
 
@@ -27,31 +29,19 @@ type Datas struct {
 
 //Global Information
 var datas Datas
+var mysql Mysql
+
+
 var users map[*websocket.Conn]string
 
 func h_index(w http.ResponseWriter, r *http.Request) {
     http.ServeFile(w, r, "index.html")
 }
 
-
-type WebSocketReqInfo{
+type WebSocketReqInfo struct {
     Type string
 }
 
-type CMMB_Res struct {
-    Type string
-    Cmmb CMMB
-}
-
-type DTMB_Res struct {
-    Type string
-    Dtmb DTMB
-}
-
-type TV_Res struct {
-    Type string
-    Tv TV
-}
 
 type Frequency_Res struct {
     Type string
@@ -63,18 +53,20 @@ type LocationInfo_Res struct {
     LocationInfo_ LocationInfo
 }
 
-fucn h_webSocket(ws *websocket.Conn){
+func h_webSocket(ws *websocket.Conn){
     for {
         fmt.Println("开始解析数据...")
         var data string
         err := websocket.Message.Receive(ws, &data)
         fmt.Println("data：", data)
         if err != nil {
-            fmt.Println("接收出错...")
-            continue
+            fmt.Println(`接收出错... :%s`, err)
+			ws.Close()
+            break
         }
 
         data = strings.Replace(data, "\n", "", 0)
+		fmt.Println(`接收:`, data)
         var webSocketReqInfo WebSocketReqInfo
         err = json.Unmarshal([]byte(data), &webSocketReqInfo)
         if err != nil {
@@ -82,25 +74,43 @@ fucn h_webSocket(ws *websocket.Conn){
             break
         }
         fmt.Println("请求数据类型：", webSocketReqInfo.Type)
+        b := getData(webSocketReqInfo.Type)
 
-        switch webSocketReqInfo.Type {
-            case "CMMB":{
-                b, errMarshl := json.Marshal(datas)
-                if errMarshl != nil {
-                    fmt.Println("全局消息内容异常...")
-                    break
-                }
-                errMarshl = websocket.Message.Send(key, string(b))
-                if errMarshl != nil {
-                    //移除出错的链接
-                    fmt.Println("发送出错...")
-                    break
-                }
-            }
-            case "DTMB":
-               
+        errMarshl:=websocket.Message.Send(ws, string(b))
+        if errMarshl != nil {
+            //移除出错的链接
+            fmt.Println("发送出错...")
+            break
         }
     }
+
+}
+
+func getData(name string) ([]byte){
+    var b []byte
+    var errMarshl error
+    switch name{
+        case "CMMB":
+		    using_freq:=db.GetUsingFrequency(name)
+            b, errMarshl=json.Marshal(using_freq)
+        case "DTMB":
+		    using_freq:=db.GetUsingFrequency(name)
+            b, errMarshl=json.Marshal(using_freq)
+        case "TV":
+            using_freq:=db.GetUsingFrequency(name)
+            b, errMarshl=json.Marshal(using_freq)
+        case "Frequency":
+            freq:=db.GetFrequency()
+            b, errMarshl=json.Marshal(freq)
+        case "LocationInfo":
+            locationinfo:=db.GetLocationInfo()
+            b, errMarshl=json.Marshal(locationinfo)
+    }
+
+    if errMarshl != nil {
+        fmt.Println("取得数据异常...")
+    }
+    return b
 
 }
 
@@ -123,7 +133,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 var db Mysql
 
 func spectrum_init() {
-    db.MysqlOpen("testbed_v3_1", "127.0.0.1" ,3306)
+    db.MysqlOpen("spectrum_v1", "127.0.0.1" ,3306)
     return
 }
 
@@ -133,7 +143,7 @@ func main() {
     spectrum_init()
     http.HandleFunc("/", h_index)
     http.HandleFunc("/data", handler)
-	http.HandleFunc("/websocket", websocket.Handler(h_webSocket))
-    http.ListenAndServe("127.0.0.1:443", nil)
+    http.Handle("/webSocket", websocket.Handler(h_webSocket))
+    http.ListenAndServe("43.82.40.115:443", nil)
     //http.ListenAndServeTLS(":8081", "server.crt", "server.key", nil)
 }
