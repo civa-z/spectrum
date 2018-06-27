@@ -15,7 +15,6 @@ type Mysql struct{
 func (mql *Mysql) MysqlOpen(db_name string, mysql_ip string, mysql_port int) int {
     var err error
     url := fmt.Sprintf("sony:sony@tcp(%s:%d)/%s", mysql_ip, mysql_port, db_name)
-	log.Println(url)
     mql.Conn, err = sql.Open("mysql", url)
         if err == nil {
         return 0

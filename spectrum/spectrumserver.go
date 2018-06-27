@@ -109,6 +109,7 @@ func OnAvailSpectrumReq(req_body_byte []byte) ([]byte, int) {
     resp.Result.DeviceDesc.EtsiEnDeviceEmissionsClass = "3"
 
     for _, resultid := range req.Params.DeviceDesc.RulesetIds{
+		time_now := time.Now()
         var profile Profile
         profile.Hz = 470000000
         profile.Dbm = 20
@@ -122,14 +123,14 @@ func OnAvailSpectrumReq(req_body_byte []byte) ([]byte, int) {
 
         var spectrumSchedule Spectrum_Schedule
         spectrumSchedule.Spectra = append(spectrumSchedule.Spectra, spectrum)
-        spectrumSchedule.EventTime.StartTime = time.Now()
-        spectrumSchedule.EventTime.StopTime = time.Now()
+        spectrumSchedule.EventTime.StartTime = time_now
+        spectrumSchedule.EventTime.StopTime = time_now.AddDate(1,2,3)
 
         var spectrumSpec Spectrum_Spec
         spectrumSpec.SpectrumSchedules = append(spectrumSpec.SpectrumSchedules, spectrumSchedule)
 
-	spectrumSpec.TimeRange.StartTime = time.Now()
-	spectrumSpec.TimeRange.StopTime = time.Now()
+	spectrumSpec.TimeRange.StartTime = time_now
+	spectrumSpec.TimeRange.StopTime = time_now.AddDate(1,2,3)
 
         var ruleset_info Ruleset_Info
         ruleset_info.Authority = "uk"
