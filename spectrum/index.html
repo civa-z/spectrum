@@ -165,7 +165,7 @@ ul{margin:0;padding:0;list-style:none;}
 		</ul>
 		<div id="content">
 			<div id="cmmb">
-				<div id="spectrum-cmmb" class="table">  
+				<div id="spectrum-CMMB" class="table">  
 					<h2 class="table-caption">CMMB SpectrumList</h2>  
 					<div class="table-column-group">  
 						<div class="table-column"></div>
@@ -192,7 +192,7 @@ ul{margin:0;padding:0;list-style:none;}
 				</div>
 			</div>
 			<div id="dtmb">
-				<div id="spectrum-dtmb" class="table">  
+				<div id="spectrum-DTMB" class="table">  
 					<h2 class="table-caption">DTMB SpectrumList</h2>  
 					<div class="table-column-group">  
 						<div class="table-column"></div>
@@ -219,7 +219,7 @@ ul{margin:0;padding:0;list-style:none;}
 				</div>
 			</div>
 			<div id="tv">
-				<div id="spectrum-tv" class="table">  
+				<div id="spectrum-TV" class="table">  
 					<h2 class="table-caption">TV SpectrumList</h2>  
 					<div class="table-column-group">  
 						<div class="table-column"></div>
@@ -344,6 +344,10 @@ function showMsg(id, hl, isAppend) {
 
 		var request = JSON.stringify({Type: "CMMB"});
 		ws.send(request);
+		var request = JSON.stringify({Type: "DTMB"});
+		ws.send(request);
+		var request = JSON.stringify({Type: "TV"});
+		ws.send(request);
 	};
 
 $(function () {
@@ -371,11 +375,11 @@ $(function () {
 		}
 
 		ws.onmessage = function (result) {
-
 			//console.log(result.data);
 			var data = JSON.parse(result.data);
+			var name = data.Name
 			$(data.FreqUsingList).each(function (i, item) {
-				showMsg("spectrum-cmmb", tl.formart(paperTempleArr[4], [item.ID, item.DistrictCode, item.Channel, item.Power]), true);
+				showMsg("spectrum-"+name, tl.formart(paperTempleArr[4], [item.ID, item.DistrictCode, item.Channel, item.Power]), true);
 			});
 		}
 
