@@ -7,7 +7,7 @@ CREATE TABLE `LocationInfo` (
   `code` varchar(13) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=408041 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 insert into `LocationInfo` (province, city, district, code) values ('北京市', '北京市', '北京市',    '110000000000');
 insert into `LocationInfo` (province, city, district, code) values ('北京市', '北京市', '市辖区',    '110100000000');
@@ -40,7 +40,7 @@ CREATE TABLE `Frequency` (
   `high` float NOT NULL,
   PRIMARY KEY (`channelID`),
   UNIQUE KEY `channelID` (`channelID`)
-) ENGINE=InnoDB AUTO_INCREMENT=408041 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 insert into Frequency (channelID, channel, video, audio, center, low, high) values (16, 'DS16', 495.25, 501.75, 498, 494, 502);
 insert into Frequency (channelID, channel, video, audio, center, low, high) values (17, 'DS17', 503.25, 509.75, 506, 502, 510);
@@ -73,7 +73,7 @@ CREATE TABLE `CMMB` (
   `power` float NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=408041 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 insert into CMMB (districtcode, channel, power) values ('110105000000', 20, 1);
 insert into CMMB (districtcode, channel, power) values ('110105000000', 20, 1);
@@ -93,7 +93,7 @@ CREATE TABLE `DTMB` (
   `power` float NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=408041 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 insert into DTMB (districtcode, channel, power) values ('110108000000', 32, 1);
 insert into DTMB (districtcode, channel, power) values ('110108000000', 33, 3);
 insert into DTMB (districtcode, channel, power) values ('110105000000', 32, 1);
@@ -113,7 +113,7 @@ CREATE TABLE `TV` (
   `power` float NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=408041 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 insert into TV (districtcode, channel, power) values ('110108000000', 8, 30);
 insert into TV (districtcode, channel, power) values ('110108000000', 15, 30);
 insert into TV (districtcode, channel, power) values ('110108000000', 44, 3);
@@ -148,3 +148,16 @@ insert into TV (districtcode, channel, power) values ('110108000000', 2, 30);
 insert into TV (districtcode, channel, power) values ('110108000000', 6, 10);
 insert into TV (districtcode, channel, power) values ('110108000000', 21, 30);
 insert into TV (districtcode, channel, power) values ('110108000000', 27, 30);
+
+DROP TABLE IF EXISTS `FreqUsing`;
+CREATE TABLE `FreqUsing` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `districtcode` varchar(12) NOT NULL,
+  `latitude` float NOT NULL,
+  `longtitude` float NOT NULL,
+  `channel` int NOT NULL,
+  `power` float NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+

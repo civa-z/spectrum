@@ -24,6 +24,12 @@ type Freq_Using_List struct {
     FreqUsingList []Freq_Using
 }
 
+type Freq_Using_Local struct {
+    FreqUsing Freq_Using
+    Latitude float32
+    Longtitude float32
+}
+
 type Frequency struct {
     ChannelID    int
     Channel      string
