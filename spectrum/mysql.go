@@ -16,7 +16,7 @@ func (mql *Mysql) MysqlOpen(db_name string, mysql_ip string, mysql_port int) int
     var err error
     url := fmt.Sprintf("sony:sony@tcp(%s:%d)/%s", mysql_ip, mysql_port, db_name)
     mql.Conn, err = sql.Open("mysql", url)
-        if err == nil {
+    if err == nil {
         return 0
     } else {
         log.Println(err)
@@ -144,5 +144,34 @@ func (mql *Mysql) GetLocationInfo() ([]LocationInfo) {
 	locationinfos=append(locationinfos, locationinfo)
     }
     return locationinfos
+}
+
+func (mql *Mysql) GetUsingFreqLocal(location_code string) ([]Freq_Using_Local) {
+    var freq_using_local_list []Freq_Using_Local
+
+    command := fmt.Sprintf(`SELECT * FROM FreqUsing where districtcode = '%s'`, location_code)
+    rows, err := mql.Conn.Query(command)
+    if err != nil {
+        log.Println("command:", command)
+        log.Println(err)
+        return freq_using_local_list
+    }
+    defer rows.Close()
+
+    for rows.Next() {
+        var freq_using_local Freq_Using_Local
+        err := rows.Scan(
+            &freq_using_local.FreqUsing.ID,
+            &freq_using_local.FreqUsing.DistrictCode,
+            &freq_using_local.Latitude,
+            &freq_using_local.Longtitude,
+            &freq_using_local.FreqUsing.Channel,
+            &freq_using_local.FreqUsing.Power)
+        if err != nil {
+            log.Println(err)
+        }
+	freq_using_local_list = append(freq_using_local_list, freq_using_local)
+    }
+    return freq_using_local_list
 }
 

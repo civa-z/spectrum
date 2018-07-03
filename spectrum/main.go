@@ -144,6 +144,7 @@ func main() {
     http.HandleFunc("/", h_index)
     http.HandleFunc("/data", handler)
     http.Handle("/webSocket", websocket.Handler(h_webSocket))
-    //http.ListenAndServe("43.82.40.115:443", nil)
-    http.ListenAndServeTLS("192.168.1.4:443", "server.crt", "server.key", nil)
+    //err := http.ListenAndServe("43.82.40.115:443", nil)
+    err := http.ListenAndServeTLS("43.82.40.115:443", "server.crt", "server.key", nil)
+    fmt.Println(err)
 }
