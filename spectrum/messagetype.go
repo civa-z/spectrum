@@ -83,13 +83,13 @@ type Avail_Spectrum_Req struct {
 }
 
 type Profile struct {
-    Hz  int `json:"hz"`
-    Dbm int `json:"dbm"`
+    Hz  float32 `json:"hz"`
+    Dbm float32 `json:"dbm"`
 }
 
 type Spectrum struct {
     Profiles [][]Profile `json:"profiles"`
-    ResolutionBwHz int `json:"resolutionBwHz"`
+    ResolutionBwHz float32 `json:"resolutionBwHz"`
 }
 
 type Spectrum_Schedule struct {

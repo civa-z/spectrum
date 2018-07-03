@@ -109,13 +109,18 @@ func OnAvailSpectrumReq(req_body_byte []byte) ([]byte, int) {
     resp.Result.DeviceDesc.EtsiEnDeviceEmissionsClass = "3"
 
     for _, resultid := range req.Params.DeviceDesc.RulesetIds{
-		time_now := time.Now()
+        time_now := time.Now()
         var profile Profile
         profile.Hz = 470000000
         profile.Dbm = 20
 
+	var profile_end Profile
+        profile_end.Hz = 574000000
+        profile_end.Dbm = 16
+
         var profile_list []Profile
         profile_list = append(profile_list, profile)
+        profile_list = append(profile_list, profile_end)
 
         var spectrum Spectrum
         spectrum.Profiles = append(spectrum.Profiles, profile_list)
