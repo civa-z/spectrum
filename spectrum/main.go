@@ -42,10 +42,14 @@ type WebSocketReqInfo struct {
     Type string
 }
 
+type Freq_Using_List_Res struct {
+    Type string
+    Freq_Using_List_ []Freq_Using
+}
 
 type Frequency_Res struct {
     Type string
-    Frequency_ Frequency
+    Frequency_ []Frequency
 }
 
 type LocationInfo_Res struct {
@@ -91,17 +95,25 @@ func getData(name string) ([]byte){
     var errMarshl error
     switch name{
         case "CMMB":
-		    using_freq:=db.GetUsingFrequency(name)
-            b, errMarshl=json.Marshal(using_freq)
+			var freq_using_res Freq_Using_List_Res
+			freq_using_res.Type = "CMMB"
+		    freq_using_res.Freq_Using_List_ = db.GetUsingFrequency(name)
+            b, errMarshl=json.Marshal(freq_using_res)
         case "DTMB":
-		    using_freq:=db.GetUsingFrequency(name)
-            b, errMarshl=json.Marshal(using_freq)
+			var freq_using_res Freq_Using_List_Res
+			freq_using_res.Type = "DTMB"
+		    freq_using_res.Freq_Using_List_ = db.GetUsingFrequency(name)
+            b, errMarshl=json.Marshal(freq_using_res)
         case "TV":
-            using_freq:=db.GetUsingFrequency(name)
-            b, errMarshl=json.Marshal(using_freq)
+			var freq_using_res Freq_Using_List_Res
+			freq_using_res.Type = "TV"
+            freq_using_res.Freq_Using_List_ = db.GetUsingFrequency(name)
+            b, errMarshl=json.Marshal(freq_using_res)
         case "Frequency":
-            freq:=db.GetFrequency()
-            b, errMarshl=json.Marshal(freq)
+			var freq_res Frequency_Res
+			freq_res.Type = "Frequency"
+            freq_res.Frequency_ = db.GetFrequency()
+            b, errMarshl=json.Marshal(freq_res)
         case "LocationInfo":
             locationinfo:=db.GetLocationInfo()
             b, errMarshl=json.Marshal(locationinfo)
@@ -144,7 +156,7 @@ func main() {
     http.HandleFunc("/", h_index)
     http.HandleFunc("/data", handler)
     http.Handle("/webSocket", websocket.Handler(h_webSocket))
-    //err := http.ListenAndServe("43.82.40.115:443", nil)
-    err := http.ListenAndServeTLS("43.82.40.115:443", "server.crt", "server.key", nil)
+    //err := http.ListenAndServe("192.168.1.110:443", nil)
+    err := http.ListenAndServeTLS("192.168.1.112:443", "server.crt", "server.key", nil)
     fmt.Println(err)
 }

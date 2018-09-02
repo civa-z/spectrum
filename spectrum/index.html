@@ -161,6 +161,7 @@ ul{margin:0;padding:0;list-style:none;}
 			<li><a href="#" name="cmmb">cmmb</a></li>
 			<li><a href="#" name="dtmb">dtmb</a></li>
 			<li><a href="#" name="tv">tv</a></li>
+			<li><a href="#" name="realtime">realtime</a></li>
 			<li><a href="#" name="frequency">frequency</a></li>    
 		</ul>
 		<div id="content">
@@ -245,9 +246,9 @@ ul{margin:0;padding:0;list-style:none;}
 					</div>
 				</div>
 			</div>
-			<div id="frequency">
-				<div id="frequency-list" class="table">  
-					<h2 class="table-caption">Frequence</h2>  
+			<div id="realtime">
+				<div id="spectrum-realtime" class="table">  
+					<h2 class="table-caption">Real time using SpectrumList</h2>  
 					<div class="table-column-group">  
 						<div class="table-column"></div>
 						<div class="table-column"></div>
@@ -272,12 +273,49 @@ ul{margin:0;padding:0;list-style:none;}
 					</div>
 				</div>
 			</div>
+			<div id="frequency">
+				<div id="Frequency-list" class="table">  
+					<h2 class="table-caption">Frequence</h2>  
+					<div class="table-column-group">  
+						<div class="table-column"></div>
+						<div class="table-column"></div>
+						<div class="table-column"></div>
+						<div class="table-column"></div>
+						<div class="table-column"></div>
+						<div class="table-column"></div>
+						<div class="table-column"></div>
+					</div>
+					<div class="table-header-group">
+						<ul class="table-row">
+							<li class="table-cell">ChannelID</li>
+							<li class="table-cell">Channel</li>
+							<li class="table-cell">Video</li>
+							<li class="table-cell">Audio</li>
+							<li class="table-cell">Center</li>
+							<li class="table-cell">Low</li>
+							<li class="table-cell">High</li>
+						</ul>
+					</div>
+					<div class="table-footer-group">
+						<ul class="table-row">
+							<li class="table-cell">-</li>
+							<li class="table-cell">-</li>
+							<li class="table-cell">-</li>
+							<li class="table-cell">-</li>
+							<li class="table-cell">-</li>
+							<li class="table-cell">-</li>
+							<li class="table-cell">-</li>
+						</ul>
+					</div>
+				</div>
+			</div>
 
 		</div>
     </div>
 </body>
 </html>
-<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+<!--script src="http://code.jquery.com/jquery-1.7.2.min.js"></script-->
+<script src="https://code.jquery.com/jquery-1.7.2.min.js"></script>
 <script>
 
 $(document).ready(function() {
@@ -307,7 +345,7 @@ var paperTempleArr = [
 	'<div class="list-group-item list-group-item-info">{0}</div>',
 	'<div class="list-group-item list-group-item-warning">{0}</div>',
 	'<div class="list-group-item list-group-item-danger">{0}</div>',
-	'<div class="table-row-group"><ul class="table-row"><li class="table-cell">{0}</li><li class="table-cell">{1}</li><li class="table-cell">{2}</li><li class="table-cell">{3}</li></ul></div>'
+	'<div class="table-row-group"><ul class="table-row"><li class="table-cell">	{0}</li><li class="table-cell">{1}</li><li class="table-cell">{2}</li><li class="table-cell">{3}</li></ul></div>'
 ];
 
 var tool = function () {
@@ -315,7 +353,6 @@ var tool = function () {
 	return {
 
 		paperDiv: function (val) {
-
 			var hl = paperTempleArr[paperLoopNum];
 			paperLoopNum++;
 			if (paperLoopNum >= paperTempleArr.length) { paperLoopNum = 0; }
@@ -323,11 +360,24 @@ var tool = function () {
 			return this.formart(hl, [val])
 		},
 		formart: function (str, arrVal) {
-
 			for (var i = 0; i < arrVal.length; i++) {
 				str = str.replace("{" + i + "}", arrVal[i]);
 			}
 			return str;
+		},
+		
+		formatTab: function (arrVal) {
+			var str = '<div class="table-row-group"><ul class="table-row">';
+			for (var i = 0; i < arrVal.length; i++) {
+				str = str +  this.toTabCell(i, arrVal[i]);
+			}
+			str = str + '</ul></div>';
+			return str;
+		},
+		
+		toTabCell: function (number, content) {
+			var str = '<li class="table-cell">#</li>';
+			return str.replace("#", content);
 		}
 	}
 }
@@ -348,6 +398,8 @@ function showMsg(id, hl, isAppend) {
 		ws.send(request);
 		var request = JSON.stringify({Type: "TV"});
 		ws.send(request);
+		var request = JSON.stringify({Type: "Frequency"});
+		ws.send(request);
 	};
 
 $(function () {
@@ -355,7 +407,7 @@ $(function () {
 	//初始化工具方法
 	var tl = new tool();
 
-	var wsUrl = "wss://43.82.40.115:443/webSocket";
+	var wsUrl = "wss://192.168.1.112:443/webSocket";
 	ws = new WebSocket(wsUrl);
 
 	try {
@@ -375,12 +427,30 @@ $(function () {
 		}
 
 		ws.onmessage = function (result) {
-			//console.log(result.data);
 			var data = JSON.parse(result.data);
-			var name = data.Name
-			$(data.FreqUsingList).each(function (i, item) {
-				showMsg("spectrum-"+name, tl.formart(paperTempleArr[4], [item.ID, item.DistrictCode, item.Channel, item.Power]), true);
-			});
+			var type = data.Type;
+			switch (type) {
+				case 'CMMB':
+					$(data.Freq_Using_List_).each(function (i, item) {
+						showMsg("spectrum-"+type, tl.formatTab([item.ID, item.DistrictCode, item.Channel, item.Power]), true);
+					});
+					break;
+				case "DTMB":
+					$(data.Freq_Using_List_).each(function (i, item) {
+						showMsg("spectrum-"+type, tl.formatTab([item.ID, item.DistrictCode, item.Channel, item.Power]), true);
+					});
+					break;
+				case "TV":
+					$(data.Freq_Using_List_).each(function (i, item) {
+						showMsg("spectrum-"+type, tl.formatTab([item.ID, item.DistrictCode, item.Channel, item.Power]), true);
+					});
+					break;
+				case "Frequency":
+					$(data.Frequency_).each(function (i, item) {
+						showMsg("Frequency-list", tl.formatTab([item.ChannelID, item.Channel, item.Video, item.Audio, item.Center, item.Low, item.High]), true);
+					});
+					break;
+			}
 		}
 
 		ws.onerror = function () {

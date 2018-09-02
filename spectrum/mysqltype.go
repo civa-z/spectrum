@@ -19,11 +19,6 @@ type Freq_Using struct {
     Power        float32
 }
 
-type Freq_Using_List struct {
-    Name          string
-    FreqUsingList []Freq_Using
-}
-
 type Freq_Using_Local struct {
     FreqUsing Freq_Using
     Latitude float32

@@ -59,9 +59,8 @@ func (mql *Mysql) GetAllPtx(IP_address string) (All_Ptx) {
     return ap
 }
 
-func (mql *Mysql) GetUsingFrequency(name string) (Freq_Using_List) {
-    var freq_using_list Freq_Using_List
-    freq_using_list.Name=name
+func (mql *Mysql) GetUsingFrequency(name string) ([]Freq_Using) {
+    var freq_using_list []Freq_Using
 
     command := fmt.Sprintf(`select id, districtcode, channel, power from %s`, name)
 	log.Println(command)
@@ -83,15 +82,17 @@ func (mql *Mysql) GetUsingFrequency(name string) (Freq_Using_List) {
         if err != nil {
             log.Println(err)
         }
-	freq_using_list.FreqUsingList=append(freq_using_list.FreqUsingList, freq_using)
+		freq_using_list=append(freq_using_list, freq_using)
     }
     return freq_using_list
 }
 
 func (mql *Mysql) GetFrequency() ([]Frequency) {
+log.Println("GetFrequency")
     var freq_list []Frequency
 
     command := `SELECT * FROM Frequency`
+	log.Println(command)
     rows, err := mql.Conn.Query(command)
     if err != nil {
         log.Println("command:", command)
