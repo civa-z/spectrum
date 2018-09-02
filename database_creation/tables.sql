@@ -149,9 +149,10 @@ insert into TV (districtcode, channel, power) values ('110108000000', 6, 10);
 insert into TV (districtcode, channel, power) values ('110108000000', 21, 30);
 insert into TV (districtcode, channel, power) values ('110108000000', 27, 30);
 
-DROP TABLE IF EXISTS `FreqUsing`;
-CREATE TABLE `FreqUsing` (
+DROP TABLE IF EXISTS `OnlineDevice`;
+CREATE TABLE `OnlineDevice` (
   `id` int NOT NULL AUTO_INCREMENT,
+  `serialnumber` varchar(20) NOT NULL,
   `districtcode` varchar(12) NOT NULL,
   `latitude` float NOT NULL,
   `longtitude` float NOT NULL,

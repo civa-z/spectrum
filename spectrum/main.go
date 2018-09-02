@@ -38,25 +38,6 @@ func h_index(w http.ResponseWriter, r *http.Request) {
     http.ServeFile(w, r, "index.html")
 }
 
-type WebSocketReqInfo struct {
-    Type string
-}
-
-type Freq_Using_List_Res struct {
-    Type string
-    Freq_Using_List_ []Freq_Using
-}
-
-type Frequency_Res struct {
-    Type string
-    Frequency_ []Frequency
-}
-
-type LocationInfo_Res struct {
-    Type string
-    LocationInfo_ LocationInfo
-}
-
 func h_webSocket(ws *websocket.Conn){
     for {
         fmt.Println("开始解析数据...")
@@ -114,7 +95,12 @@ func getData(name string) ([]byte){
 			freq_res.Type = "Frequency"
             freq_res.Frequency_ = db.GetFrequency()
             b, errMarshl=json.Marshal(freq_res)
-        case "LocationInfo":
+        case "OnlineDevice":
+			var online_device_res OnlineDevice_Res
+			online_device_res.Type = "OnlineDevice"
+			online_device_res.OnlineDevicelist = db.GetOnlineDevice("*")
+            b, errMarshl=json.Marshal(online_device_res)
+        case "LocationInfo"://Not implemented
             locationinfo:=db.GetLocationInfo()
             b, errMarshl=json.Marshal(locationinfo)
     }

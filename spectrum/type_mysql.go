@@ -25,6 +25,13 @@ type Freq_Using_Local struct {
     Longtitude float32
 }
 
+type Online_Device struct {
+	FreqUsing    Freq_Using
+	SerialNumber string
+	Latitude     float64
+	Longtitude   float64
+}
+
 type Frequency struct {
     ChannelID    int
     Channel      string
@@ -35,7 +42,8 @@ type Frequency struct {
     High         float32
 }
 
-type LocationInfo struct {
+//Using for get the district code from location information
+type Location_Info struct {
     Id           int
     Province     string
     City         string

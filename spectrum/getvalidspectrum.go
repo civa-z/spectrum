@@ -12,13 +12,13 @@ func getvalidspectrum(location Location_) ([]Profile) {
 
     freq_list := db.GetFrequency()
     usingfreq_global := getUsingFreq_global(location_code)
-    usignfreq_local := getUsingFreq_local(location_code)
+    onlinedevice_local := db.GetOnlineDevice(location_code)
 
     //TODO using those there list to calculate the new free frequency list
     // that can be used for new request
     _ = freq_list
     _ = usingfreq_global
-    _ = usignfreq_local
+    _ = onlinedevice_local
 
     return profiles
 }
@@ -34,34 +34,20 @@ func getUsingFreq_global(location_code string) ([]Freq_Using) {
     for _, value := range using_freq_list_CMMB{
         if value.DistrictCode == location_code{
             using_freq_list = append(using_freq_list, value)
-	}
+		}
     }
 
 
     for _, value := range using_freq_list_DTMB{
         if value.DistrictCode == location_code{
             using_freq_list = append(using_freq_list, value)
-	}
+		}
     }
 
     for _, value := range using_freq_list_TV{
         if value.DistrictCode == location_code{
             using_freq_list = append(using_freq_list, value)
-	}
+		}
     }
     return using_freq_list
 }
-
-func getUsingFreq_local(location_code string) ([]Freq_Using_Local){
-    var freq_using_local_list []Freq_Using_Local
-
-    using_freq_list_local := db.GetUsingFreqLocal(location_code)
-    for _, value := range using_freq_list_local {
-        if value.FreqUsing.DistrictCode == location_code {
-	    freq_using_local_list = append(freq_using_local_list, value)
-	}
-    }
-    return freq_using_local_list
-
-}
-

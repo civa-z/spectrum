@@ -161,7 +161,7 @@ ul{margin:0;padding:0;list-style:none;}
 			<li><a href="#" name="cmmb">cmmb</a></li>
 			<li><a href="#" name="dtmb">dtmb</a></li>
 			<li><a href="#" name="tv">tv</a></li>
-			<li><a href="#" name="realtime">realtime</a></li>
+			<li><a href="#" name="onlinedevice">onlinedevice</a></li>
 			<li><a href="#" name="frequency">frequency</a></li>    
 		</ul>
 		<div id="content">
@@ -246,10 +246,12 @@ ul{margin:0;padding:0;list-style:none;}
 					</div>
 				</div>
 			</div>
-			<div id="realtime">
-				<div id="spectrum-realtime" class="table">  
-					<h2 class="table-caption">Real time using SpectrumList</h2>  
+			<div id="onlinedevice">
+				<div id="spectrum-onlinedevice" class="table">  
+					<h2 class="table-caption">Online device information</h2>  
 					<div class="table-column-group">  
+						<div class="table-column"></div>
+						<div class="table-column"></div>
 						<div class="table-column"></div>
 						<div class="table-column"></div>
 						<div class="table-column"></div>
@@ -258,13 +260,19 @@ ul{margin:0;padding:0;list-style:none;}
 					<div class="table-header-group">
 						<ul class="table-row">
 							<li class="table-cell">id</li>
+							<li class="table-cell">serialnumber</li>
 							<li class="table-cell">districtcode</li>
 							<li class="table-cell">channel</li>
 							<li class="table-cell">power</li>
+							<li class="table-cell">latitude</li>
+							<li class="table-cell">longtitude</li>
 						</ul>
 					</div>
 					<div class="table-footer-group">
 						<ul class="table-row">
+							<li class="table-cell">-</li>
+							<li class="table-cell">-</li>
+							<li class="table-cell">-</li>
 							<li class="table-cell">-</li>
 							<li class="table-cell">-</li>
 							<li class="table-cell">-</li>
@@ -400,6 +408,8 @@ function showMsg(id, hl, isAppend) {
 		ws.send(request);
 		var request = JSON.stringify({Type: "Frequency"});
 		ws.send(request);
+		var request = JSON.stringify({Type: "OnlineDevice"});
+		ws.send(request);
 	};
 
 $(function () {
@@ -447,7 +457,23 @@ $(function () {
 					break;
 				case "Frequency":
 					$(data.Frequency_).each(function (i, item) {
-						showMsg("Frequency-list", tl.formatTab([item.ChannelID, item.Channel, item.Video, item.Audio, item.Center, item.Low, item.High]), true);
+						showMsg("Frequency-list",
+							tl.formatTab([item.ChannelID, item.Channel,
+								item.Video, item.Audio, 
+								item.Center, item.Low, 
+								item.High]),
+							true);
+					});
+					break;
+				case "OnlineDevice":
+					$("spectrum-onlinedevice").removeElementsByClass("table-row-group")
+					$(data.Frequency_).each(function (i, item) {
+						showMsg("spectrum-onlinedevice", 
+							tl.formatTab([item.FreqUsing.ID, item.SerialNumber,
+								item.FreqUsing.DistrictCode, item.FreqUsing.Channel,
+								item.FreqUsing.Power, item.Latitude,
+								item.Longtitude]),
+							true);
 					});
 					break;
 			}

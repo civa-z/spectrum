@@ -93,9 +93,24 @@ func OnInitReq(req_body_byte []byte) ([]byte, int) {
     return resp_body_byte, 0
 }
 
+var frequency_list []Frequency
+func GetChannelID(start_freq float32, end_freq float32) (int, string) {
+	if(len(frequency_list) == 0){
+		frequency_list = db.GetFrequency()
+	}
+	
+	for _, frequency := range frequency_list{
+		if start_freq <= frequency.Center && end_freq >= frequency.Center {
+			return frequency.ChannelID, frequency.Channel
+		}
+	}
+	return -1, ""
+}
+
 func OnAvailSpectrumReq(req_body_byte []byte) ([]byte, int) {
     var req Avail_Spectrum_Req
     var resp Avail_Spectrum_Resp
+	var online_device Online_Device
     json.Unmarshal(req_body_byte, &req)
 
     //TO DO
@@ -105,26 +120,32 @@ func OnAvailSpectrumReq(req_body_byte []byte) ([]byte, int) {
     resp.Result.Version = req.Params.Version
     resp.Result.Timestamp = time.Now()
     resp.Result.DeviceDesc = req.Params.DeviceDesc
-    resp.Result.DeviceDesc.SerialNumber = "750000105"
-    resp.Result.DeviceDesc.EtsiEnDeviceEmissionsClass = "3"
+	
+	online_device.SerialNumber = req.Params.DeviceDesc.SerialNumber
+	online_device.FreqUsing.DistrictCode = "UnKnown"
+	online_device.Latitude = req.Params.Location.Point.Center.Latitude
+	online_device.Longtitude = req.Params.Location.Point.Center.Longitude
 
     for _, resultid := range req.Params.DeviceDesc.RulesetIds{
         time_now := time.Now()
-        var profile Profile
-        profile.Hz = 470000000
-        profile.Dbm = 20
+        var profile_start Profile
+        profile_start.Hz = 470000000
+        profile_start.Dbm = 16
 
-	var profile_end Profile
+		var profile_end Profile
         profile_end.Hz = 574000000
         profile_end.Dbm = 16
+		
+		online_device.FreqUsing.Channel, _ = GetChannelID(profile_start.Hz, profile_end.Hz)
+		online_device.FreqUsing.Power = profile_start.Dbm
 
         var profile_list []Profile
-        profile_list = append(profile_list, profile)
+        profile_list = append(profile_list, profile_start)
         profile_list = append(profile_list, profile_end)
 
         var spectrum Spectrum
         spectrum.Profiles = append(spectrum.Profiles, profile_list)
-	spectrum.ResolutionBwHz = 8000000
+		spectrum.ResolutionBwHz = 8000000
 
         var spectrumSchedule Spectrum_Schedule
         spectrumSchedule.Spectra = append(spectrumSchedule.Spectra, spectrum)
@@ -134,8 +155,8 @@ func OnAvailSpectrumReq(req_body_byte []byte) ([]byte, int) {
         var spectrumSpec Spectrum_Spec
         spectrumSpec.SpectrumSchedules = append(spectrumSpec.SpectrumSchedules, spectrumSchedule)
 
-	spectrumSpec.TimeRange.StartTime = time_now
-	spectrumSpec.TimeRange.StopTime = time_now.AddDate(1,2,3)
+		spectrumSpec.TimeRange.StartTime = time_now
+		spectrumSpec.TimeRange.StopTime = time_now.AddDate(1,2,3)
 
         var ruleset_info Ruleset_Info
         ruleset_info.Authority = "uk"
@@ -145,19 +166,21 @@ func OnAvailSpectrumReq(req_body_byte []byte) ([]byte, int) {
         ruleset_info.McwsdSupport = true
         spectrumSpec.RulesetInfo = ruleset_info
 
-	var frequencyRange Frequency_Range
-	frequencyRange.StartHz = 470000000
-	frequencyRange.StopHz = 790000000
-	spectrumSpec.FrequencyRanges = append(spectrumSpec.FrequencyRanges, frequencyRange)
+		var frequencyRange Frequency_Range
+		frequencyRange.StartHz = 470000000
+		frequencyRange.StopHz = 790000000
+		spectrumSpec.FrequencyRanges = append(spectrumSpec.FrequencyRanges, frequencyRange)
 
-	spectrumSpec.NeedsSpectrumReport = true
-	spectrumSpec.MaxTotalBwHz = 24000000
-	spectrumSpec.MaxContiguousBwHz = 24000000
-	spectrumSpec.EtsiEnSimultaneousChannelOpera = "0"
+		spectrumSpec.NeedsSpectrumReport = true
+		spectrumSpec.MaxTotalBwHz = 24000000
+		spectrumSpec.MaxContiguousBwHz = 24000000
+		spectrumSpec.EtsiEnSimultaneousChannelOpera = "0"
 
         resp.Result.SpectrumSpecs = append(resp.Result.SpectrumSpecs, spectrumSpec)
     }
 
+	db.InsertOnlineDevice(online_device)
+	
     resp_body_byte, e:= json.Marshal(resp)
     if e != nil{
         return nil, 404

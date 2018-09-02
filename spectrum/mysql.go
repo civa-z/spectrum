@@ -69,7 +69,7 @@ func (mql *Mysql) GetUsingFrequency(name string) ([]Freq_Using) {
         log.Println("command:", command)
         log.Println(err)
         return freq_using_list
-    }
+    } 
     defer rows.Close()
 
     for rows.Next() {
@@ -119,60 +119,88 @@ log.Println("GetFrequency")
     return freq_list
 }
 
-func (mql *Mysql) GetLocationInfo() ([]LocationInfo) {
-    var locationinfos []LocationInfo
+func (mql *Mysql) GetLocationInfo() ([]Location_Info) {
+    var location_infos []Location_Info
 
     command := `SELECT * FROM LocationInfo`
     rows, err := mql.Conn.Query(command)
     if err != nil {
         log.Println("command:", command)
         log.Println(err)
-        return locationinfos
+        return location_infos
     }
     defer rows.Close()
 
     for rows.Next() {
-        var locationinfo LocationInfo
+        var location_info Location_Info
         err := rows.Scan(
-            &locationinfo.Id,
-            &locationinfo.Province,
-            &locationinfo.City,
-            &locationinfo.District,
-            &locationinfo.Code)
+            &location_info.Id,
+            &location_info.Province,
+            &location_info.City,
+            &location_info.District,
+            &location_info.Code)
         if err != nil {
             log.Println(err)
         }
-	locationinfos=append(locationinfos, locationinfo)
+	location_infos=append(location_infos, location_info)
     }
-    return locationinfos
+    return location_infos
 }
 
-func (mql *Mysql) GetUsingFreqLocal(location_code string) ([]Freq_Using_Local) {
-    var freq_using_local_list []Freq_Using_Local
-
-    command := fmt.Sprintf(`SELECT * FROM FreqUsing where districtcode = '%s'`, location_code)
+func (mql *Mysql) GetOnlineDevice(location_code string) ([]Online_Device) {
+    var online_device_list []Online_Device
+	var command string
+	if location_code == "*"{
+		command = fmt.Sprintf(`SELECT * FROM OnlineDevice`)
+	} else {
+		command = fmt.Sprintf(`SELECT * FROM OnlineDevice where DistrictCode == %s`, location_code)
+	}
+	log.Println(command)
     rows, err := mql.Conn.Query(command)
     if err != nil {
         log.Println("command:", command)
         log.Println(err)
-        return freq_using_local_list
+        return online_device_list
     }
     defer rows.Close()
 
     for rows.Next() {
-        var freq_using_local Freq_Using_Local
+        var online_device Online_Device
         err := rows.Scan(
-            &freq_using_local.FreqUsing.ID,
-            &freq_using_local.FreqUsing.DistrictCode,
-            &freq_using_local.Latitude,
-            &freq_using_local.Longtitude,
-            &freq_using_local.FreqUsing.Channel,
-            &freq_using_local.FreqUsing.Power)
+			&online_device.SerialNumber,
+            &online_device.Latitude,
+            &online_device.Longtitude,
+            &online_device.FreqUsing.ID,
+            &online_device.FreqUsing.DistrictCode,
+            &online_device.FreqUsing.Channel,
+            &online_device.FreqUsing.Power)
         if err != nil {
             log.Println(err)
         }
-	freq_using_local_list = append(freq_using_local_list, freq_using_local)
+	online_device_list = append(online_device_list, online_device)
     }
-    return freq_using_local_list
+    return online_device_list
 }
 
+func (mql *Mysql) InsertOnlineDevice(online_device Online_Device) {
+	command := fmt.Sprintf(`INSERT into OnlineDevice(serialnumber districtcode latitude longtitude channel power) values(%s %s %f %f %d %f)`,
+		online_device.SerialNumber,
+		online_device.Latitude,
+		online_device.Longtitude,
+		online_device.FreqUsing.Channel,
+		online_device.FreqUsing.Power)
+		
+	result, err := mql.Conn.Exec(command)
+	if err != nil {
+		fmt.Println("insert data failed:", err.Error())
+		return
+	}
+	
+	id, err := result.LastInsertId()
+	if err != nil {
+		fmt.Println("fetch last insert id failed:", err.Error())
+		return
+	}
+	fmt.Println("insert new record", id)
+	return
+}

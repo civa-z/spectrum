@@ -4,6 +4,7 @@ import (
     "time"
 )
 
+// Define message type used between client deivce and server
 
 type Location_ struct {
 	Point struct {
