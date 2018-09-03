@@ -7,6 +7,8 @@ import (
     "time"
     "log"
     "strings"
+	"fmt"
+    "golang.org/x/net/websocket"
 )
 
 const (
@@ -26,7 +28,7 @@ func ProcessReq(r *http.Request) ([]byte, int) {
     var resp[]byte
     var ret int
 
-    if !strings.Contains(r.URL.String(), "/date") {
+    if !strings.Contains(r.URL.String(), "/data") {
         return nil, 404
     }
 
@@ -179,7 +181,27 @@ func OnAvailSpectrumReq(req_body_byte []byte) ([]byte, int) {
         resp.Result.SpectrumSpecs = append(resp.Result.SpectrumSpecs, spectrumSpec)
     }
 
-	db.InsertOnlineDevice(online_device)
+	if db.HasOnlineDevice(online_device.SerialNumber){
+		db.UpdateOnlineDevice(online_device)
+	} else {
+		db.InsertOnlineDevice(online_device)
+	}
+	if g_ws_conn != nil {
+		var online_device_res OnlineDevice_Res
+		online_device_res.Type = "OnlineDevice"
+		online_device_res.OnlineDevicelist = db.GetOnlineDevice("*")
+		b, errMarshl:=json.Marshal(online_device_res)
+		if errMarshl != nil {
+			fmt.Println("取得数据异常online_device_res...")
+		}
+		errMarshl=websocket.Message.Send(g_ws_conn, string(b))
+        if errMarshl != nil {
+            //移除出错的链接
+            fmt.Println("发送出错...")
+        }
+	} else {
+		fmt.Println("g_ws_conn == nil")
+	}
 	
     resp_body_byte, e:= json.Marshal(resp)
     if e != nil{

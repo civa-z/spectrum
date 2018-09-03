@@ -38,7 +38,12 @@ func h_index(w http.ResponseWriter, r *http.Request) {
     http.ServeFile(w, r, "index.html")
 }
 
+var g_ws_conn *websocket.Conn
 func h_webSocket(ws *websocket.Conn){
+    if g_ws_conn == nil {
+         g_ws_conn = ws
+    }
+
     for {
         fmt.Println("开始解析数据...")
         var data string
@@ -119,7 +124,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
     resp, err_num = ProcessReq(r)
     if err_num == 0 {
         w.Header().Set("content-length", strconv.Itoa(len(resp)))
-	w.Write(resp)
+		w.Write(resp)
     } else {
         w.WriteHeader(400)
         fmt.Fprintf(w, "Hi, This is an example of http service in golang{!")
@@ -132,6 +137,7 @@ var db Mysql
 
 func spectrum_init() {
     db.MysqlOpen("spectrum_v1", "127.0.0.1" ,3306)
+	db.ClearOnlineDevice()
     return
 }
 

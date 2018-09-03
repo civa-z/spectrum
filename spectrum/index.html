@@ -411,7 +411,7 @@ function showMsg(id, hl, isAppend) {
 		var request = JSON.stringify({Type: "OnlineDevice"});
 		ws.send(request);
 	};
-
+	
 $(function () {
 
 	//初始化工具方法
@@ -466,8 +466,11 @@ $(function () {
 					});
 					break;
 				case "OnlineDevice":
-					$("spectrum-onlinedevice").removeElementsByClass("table-row-group")
-					$(data.Frequency_).each(function (i, item) {
+					var elements = document.getElementById("spectrum-onlinedevice").getElementsByClassName("table-row-group");
+					while(elements.length > 0){
+						elements[0].parentNode.removeChild(elements[0]);
+					}
+					$(data.OnlineDevicelist).each(function (i, item) {
 						showMsg("spectrum-onlinedevice", 
 							tl.formatTab([item.FreqUsing.ID, item.SerialNumber,
 								item.FreqUsing.DistrictCode, item.FreqUsing.Channel,

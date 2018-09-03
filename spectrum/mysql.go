@@ -167,11 +167,11 @@ func (mql *Mysql) GetOnlineDevice(location_code string) ([]Online_Device) {
     for rows.Next() {
         var online_device Online_Device
         err := rows.Scan(
+		    &online_device.FreqUsing.ID,
 			&online_device.SerialNumber,
+            &online_device.FreqUsing.DistrictCode,
             &online_device.Latitude,
             &online_device.Longtitude,
-            &online_device.FreqUsing.ID,
-            &online_device.FreqUsing.DistrictCode,
             &online_device.FreqUsing.Channel,
             &online_device.FreqUsing.Power)
         if err != nil {
@@ -182,14 +182,77 @@ func (mql *Mysql) GetOnlineDevice(location_code string) ([]Online_Device) {
     return online_device_list
 }
 
+
+func (mql *Mysql) HasOnlineDevice(serial_number string) (bool) {
+	command := fmt.Sprintf(`SELECT * FROM OnlineDevice where SerialNumber = %s`, serial_number)
+	log.Println(command)
+    rows, err := mql.Conn.Query(command)
+    if err != nil {
+        log.Println("command:", command)
+        log.Println(err)
+        return false
+    }
+    defer rows.Close()
+
+    for rows.Next() {
+        return true
+    }
+    return false
+}
+
 func (mql *Mysql) InsertOnlineDevice(online_device Online_Device) {
-	command := fmt.Sprintf(`INSERT into OnlineDevice(serialnumber districtcode latitude longtitude channel power) values(%s %s %f %f %d %f)`,
+	command := fmt.Sprintf(`INSERT into OnlineDevice(serialnumber, districtcode, latitude, longtitude, channel, power) values(%s, '%s', %f, %f, %d, %f)`,
 		online_device.SerialNumber,
+		online_device.FreqUsing.DistrictCode,
 		online_device.Latitude,
 		online_device.Longtitude,
 		online_device.FreqUsing.Channel,
 		online_device.FreqUsing.Power)
-		
+	log.Println(command)
+	result, err := mql.Conn.Exec(command)
+	if err != nil {
+		fmt.Println("insert data failed:", err.Error())
+		return
+	}
+	
+	id, err := result.LastInsertId()
+	if err != nil {
+		fmt.Println("fetch last insert id failed:", err.Error())
+		return
+	}
+	fmt.Println("insert new record", id)
+	return
+}
+
+
+func (mql *Mysql) UpdateOnlineDevice(online_device Online_Device) {
+	command := fmt.Sprintf(`update OnlineDevice set serialnumber = %s, districtcode = '%s', latitude = %f, longtitude = %f, channel = %d, power = %f where id = %d`,
+		online_device.SerialNumber,
+		online_device.FreqUsing.DistrictCode,
+		online_device.Latitude,
+		online_device.Longtitude,
+		online_device.FreqUsing.Channel,
+		online_device.FreqUsing.Power,
+		online_device.FreqUsing.ID)
+	log.Println(command)
+	result, err := mql.Conn.Exec(command)
+	if err != nil {
+		fmt.Println("insert data failed:", err.Error())
+		return
+	}
+	
+	id, err := result.LastInsertId()
+	if err != nil {
+		fmt.Println("fetch last insert id failed:", err.Error())
+		return
+	}
+	fmt.Println("insert new record", id)
+	return
+}
+
+func (mql *Mysql) ClearOnlineDevice() {
+	command := `DELETE FROM OnlineDevice`
+	log.Println(command)
 	result, err := mql.Conn.Exec(command)
 	if err != nil {
 		fmt.Println("insert data failed:", err.Error())
